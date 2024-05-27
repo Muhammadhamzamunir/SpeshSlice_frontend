@@ -1,0 +1,122 @@
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+.header__content__nav{
+    width: auto;
+    display: flex;
+    justify-content: center;
+    
+}
+
+.header__content__nav ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 32px;
+    gap: 30px;
+    
+}
+.header__content__nav a {
+    text-decoration: none;
+    color: inherit;
+    padding: 0.5rem 1.05rem;
+    transition: 0.3s ease all;
+    cursor: pointer;
+    display: flex;
+    text-transform: uppercase;
+    font-size: 14px;
+    font-variant: normal;
+    flex-direction: column;
+    align-items: center; 
+    justify-self: center;
+   
+}
+
+.btn__login {
+    background: transparent;
+    color: black;
+    border: 3px solid #ff778d;
+    border-radius: 10px; 
+    font-weight: 600;
+    padding: 8px; 
+    padding-inline: 12px;
+    transition: color 0.8s ease-in-out; 
+}
+
+.btn__login:hover {
+    background: linear-gradient(30deg, #ff59ac, #ff679a, #ff778d, #ff8884, #ff9881) !important;
+    color: white;
+    transition: color 0.8s ease-in-out; 
+}
+
+.header__content__nav.isMenu {
+    transform: translate(100%);
+}
+
+.header__content__toggle {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    font-size: 2rem;
+    transition: 0.3s ease all;
+    position: relative;
+}
+
+
+@media (min-width: 48em) {
+    .header__content__nav {
+        transform: none;
+        flex-direction: row;
+        background: transparent;
+        width: auto;
+        height: 100%;
+        position: static;
+        
+    }
+
+    .header__content__nav ul {
+        flex-direction: row;
+        align-items: center;
+        margin-bottom: 0;
+        margin-right: calc(0.5rem + 16px);
+    }
+    
+
+  
+}
+@media (max-width: 768px) {
+    .header__content__nav a {
+        gap: 10px;
+        flex-direction: row ;
+    }
+    .header__content__nav ul {
+        gap: 5px;
+        width: 100%;
+    }
+    
+  }
+  
+.header__content__nav .nav-icon {
+   margin-bottom: 5px;
+   height: 1.5rem;
+    font-size: 1.2rem; 
+    color: grey; 
+}
+
+.header__content__nav:hover .nav-icon {
+    color: linear-gradient(30deg, #ff59ac, #ff679a, #ff778d, #ff8884, #ff9881) !important;
+    transition: 0.1s ease all;
+
+}
+
+.header__content__nav a:hover .nav-icon {
+    font-size: 1.5rem;
+    transition: 0.1s ease all;
+    color:  #ff778d;
+}

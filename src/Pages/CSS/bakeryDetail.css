@@ -1,0 +1,18 @@
+@keyframes slideUp {
+    0% {
+        transform: translateY(0%);
+    }
+    100% {
+        transform: translateY(-300%);
+    }
+}
+
+.animate-slideUp > * {
+    animation-name: slideUp;
+}
+
+/* Center images horizontally */
+.animate-slideUp {
+    justify-content: center;
+    align-items: center;
+}
