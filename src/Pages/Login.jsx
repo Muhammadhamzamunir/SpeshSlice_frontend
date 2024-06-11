@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import "./CSS/Login.css"
 import Button from '../Components/Button';
+import { Modal, Input, message } from 'antd';
 import { loginSchema } from '../Components/Schema';
 import { Formik, Field } from 'formik';
-import { ToastContainer, toast } from 'react-toastify';
+
 import 'react-toastify/dist/ReactToastify.css';
 import { Squares } from "react-activity";
 import "react-activity/dist/library.css";
 import index from '../Components/API';
 import { SetCookie } from '../Components/Cookies';
 import { useNavigate, } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
 let initialValues = {
     email: "",
     password: "",
@@ -19,9 +21,40 @@ let initialValues = {
 import { useUserData } from '../Components/UserAuthentication(ContextApi)';
 const Login = () => {
     const navigate = useNavigate();
+    const [visibleModal, setVisibleModal] = useState(false);
     const { fetchData } = useUserData();
+    const [email, setEmail] = useState('');
     const [securityCode, setSecurityCode] = useState(Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000);
     const { loader, APIcall } = index();
+    const [loading,setLoading]= useState(false);
+    const [F_loading, setFLoading] = useState(false)
+
+    const handleForgetPassword = () => {
+        const emailRegex = /@[^.]*\./;
+        if (!emailRegex.test(email)) {
+            toast.error("Please enter a valid Email.", {
+                position: "bottom-right", theme: "dark"
+            });
+        } else {
+            
+            setFLoading(true)
+            
+            APIcall('/forgetpassword', 'POST', {email:email}).then((data) => {
+                console.log(data);
+                toast.success(data?.message, {
+                    position: "bottom-right", theme: "dark"
+                });
+                setFLoading(false)
+            setVisibleModal(false)
+            });
+            
+        }
+    }
+    
+
+    const handleEmail = (e) => {
+        setEmail(e.target.value);
+    };
 
     return (
 
@@ -44,7 +77,7 @@ const Login = () => {
                                         <Formik initialValues={initialValues} validationSchema={loginSchema} onSubmit={async (values, action) => {
 
                                             if (values.securityCode == securityCode) {
-
+                                                setLoading(true)
                                                 APIcall('/login', 'POST', values, action).then((data) => {
 
                                                     if (data.success && data.rememberMe) {
@@ -58,7 +91,7 @@ const Login = () => {
                                                     }
                                                     fetchData();
                                                      action.resetForm();
-
+                                                     setLoading(false)
                                                 })
 
 
@@ -66,7 +99,7 @@ const Login = () => {
                                                 toast.error("Security Code Is Not Same !", {
                                                     position: "bottom-right", theme: "dark"
                                                 });
-
+                                                setLoading(false)
                                             }
                                         }}>
 
@@ -112,12 +145,12 @@ const Login = () => {
 
                                                         <div>
                                                             <div className=" ">
-                                                                <a href="#" className="" >Forgot password?</a>
+                                                                <p  className="cursor-pointer"  onClick={() => setVisibleModal(true)} >Forgot password?</p>
                                                             </div>
                                                         </div>
                                                     </div>
                                                     <div className="mb-4">
-                                                        <Button type="submit" className="w-full">{loader ? <Squares /> : "Login"}</Button>
+                                                        <Button type="submit" className="w-full">{loading ? <Squares /> : "Login"}</Button>
                                                     </div>
                                                     <p className="text-xs text-gray-500"><strong>Note:</strong>Your personal data will be used to support your experience throughout this website, to manage access to your account, and for other purposes described in our privacy policy</p>
                                                 </form>)}
@@ -137,6 +170,31 @@ const Login = () => {
                     </div>
                 </div>
             </div>
+            <Modal
+                title="Customize Cake"
+                visible={visibleModal}
+                onCancel={() => setVisibleModal(false)}
+                footer={[
+                    <Button key="submit" type="primary" onClick={handleForgetPassword}>
+                       {F_loading ? <Squares />: "Send"}  
+                    </Button>
+                ]}
+            >
+                <div>
+                    <div className="mb-4">
+                        <label htmlFor="" className=''>Enter Your Email</label>
+                        <Input
+                            type="email"
+                            value={email}
+                            onChange={handleEmail}
+                            placeholder="Number of Pound"
+                            className="border border-gray-200 rounded-lg h-12 outline-red-400 shadow-none pl-5 text-base w-full"
+
+                        />
+                    </div>
+                  
+                </div>
+            </Modal>
         </div>
     );
 

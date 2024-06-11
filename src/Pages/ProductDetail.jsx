@@ -181,7 +181,7 @@ export default function ProductDetail() {
                                         </p>
 
 
-                                        <div className="flex gap-5 items-center w-full my-5">
+                                   { productDetail.no_of_pounds &&   <div className="flex gap-5 items-center w-full my-5">
                                             <h5 className="mb-2 text-slate-500 font-medium">Size (pound):</h5>
                                             <div className="flex gap-3 flex-1">
                                                 {
@@ -192,7 +192,7 @@ export default function ProductDetail() {
                                                     ))
                                                 }
                                             </div>
-                                        </div>
+                                        </div>}
 
                                         <div className="mb-2 flex flex-wrap md:justify-left mt-3 ">
                                             <div className="w-[100px]">

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Button from '../Components/Button';
 import { Table, Space, Modal, message, Input, Checkbox, DatePicker, Select } from 'antd';
-
+import Feedback from '../Components/Feedback/Feedback';
 import { Squares } from 'react-activity';
 import { useUserData } from '../Components/UserAuthentication(ContextApi)';
 import index from '../Components/API';
@@ -14,6 +14,7 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 function UserProfile() {
   const { userInfo, fetchData } = useUserData();
+  const [showFeedback,setShowFeedback] =useState();
   const [editingProductData, setEditingProductData] = useState(null);
   const [editingProduct, setEditingProduct] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
@@ -24,7 +25,8 @@ function UserProfile() {
   const storage = getStorage(app);
   const [selectedImage, setSelectedImage] = useState(null);
   const [updatePasswordModalVisible, setUpdatePasswordModalVisible] = useState(false);
-
+  const [pendingFeedbackProucts, setProducts] = useState([]);
+  const [pendingFeedbackBakeries, setBakeries] = useState([])
   const handleImageChange = (event) => {
     setPreviewImageLoading(true);
     const file = event.target.files[0];
@@ -66,15 +68,15 @@ function UserProfile() {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const latitude = position.coords.latitude;
-          const longitude =  position.coords.longitude;
-         
+          const longitude = position.coords.longitude;
+
           // Fetch address details using reverse geocoding
           fetch(`https://api.opencagedata.com/geocode/v1/json?q=${latitude}+${longitude}&key=56bf39f3aa1f4abeb883cfad3d27113a`)
             .then(response => response.json())
             .then(data => {
               const { country, city, road, _normalized_city } = data.results[0].components;
 
-              
+
               APIcall(`/userAddress/${userInfo.user.id}`, 'POST', {
                 country: country || '',
                 city: city ? city : _normalized_city || '',
@@ -256,7 +258,19 @@ function UserProfile() {
       });
 
   };
-
+  const checkPendingFeedback = () => {
+    APIcall(`/pending-feedback/${userInfo.user.id}`, 'GET')
+      .then((data) => {
+        setProducts(data.products);
+        setBakeries(data.bakeries);
+      })
+      .catch((error) => {
+        console.error('Error fetching products:', error);
+      });
+  }
+  useEffect(() => {
+    checkPendingFeedback()
+  }, [])
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="lg:text-center pt-10">
@@ -310,7 +324,40 @@ function UserProfile() {
 
         </div>
       </div>
+      <div className="mt-10 lg:text-center">
+        <h2 className="text-base text-[#ff59ac] font-semibold tracking-wide uppercase">Feedbacks & Order History</h2>
+      </div>
+      <div className="mt-10 p-5 bg-white rounded-lg shadow">
+        <div className="grid gap-5 lg:grid-cols-2 lg:max-w-none">
+          <div className="bg-red-50 hover:shadow-lg transition duration-200 rounded-lg p-5">
+            <div className="text-center">
+              <h3 className="text-lg leading-6 font-medium text-gray-900">Pending FeedBack</h3>
+              {/* <p className="text-sm text-gray-500">You have 3 items in your cart</p> */}
+              {pendingFeedbackBakeries.length > 0 && pendingFeedbackProucts.length > 0 ? (
+                <Button className="mt-4" variant="outline" onClick={() => setShowFeedback(true)}>
+                  Show Pending Feedbacks
+                </Button>
+              ) : (
+                <p className=" text-gray-500">No Pending Feedbacks!!!... Please make some purchases and then provide the feedback.</p>
+              )}
 
+              {showFeedback && <Feedback />}
+
+
+
+            </div>
+          </div>
+          <div className="bg-purple-50 hover:shadow-lg transition duration-200 rounded-lg p-5">
+            <div className="text-center">
+              <h3 className="text-lg leading-6 font-medium text-gray-900">Order History</h3>
+              <p className="text-sm text-gray-500">You have made 5 orders in total</p>
+              <Button className="mt-4" variant="outline">
+                View Orders
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <Modal
         title="Change Password"
@@ -500,31 +547,7 @@ function UserProfile() {
           </Formik>
         )}
       </Modal>
-      {/* <div className="mt-10 lg:text-center">
-        <h2 className="text-base text-[#ff59ac] font-semibold tracking-wide uppercase">Cart & Order History</h2>
-      </div>
-      <div className="mt-10 p-5 bg-white rounded-lg shadow">
-        <div className="grid gap-5 lg:grid-cols-2 lg:max-w-none">
-          <div className="bg-red-50 hover:shadow-lg transition duration-200 rounded-lg p-5">
-            <div className="text-center">
-              <h3 className="text-lg leading-6 font-medium text-gray-900">Your Cart</h3>
-              <p className="text-sm text-gray-500">You have 3 items in your cart</p>
-              <Button className="mt-4" variant="outline">
-                View Cart
-              </Button>
-            </div>
-          </div>
-          <div className="bg-purple-50 hover:shadow-lg transition duration-200 rounded-lg p-5">
-            <div className="text-center">
-              <h3 className="text-lg leading-6 font-medium text-gray-900">Order History</h3>
-              <p className="text-sm text-gray-500">You have made 5 orders in total</p>
-              <Button className="mt-4" variant="outline">
-                View Orders
-              </Button>
-            </div>
-          </div>
-        </div>
-      </div> */}
+
     </div >
   );
 }

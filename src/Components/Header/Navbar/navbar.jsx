@@ -82,6 +82,9 @@ function Navbar() {
       if (data.success) {
         RemoveCookie();
         fetchData();
+      }else{
+        RemoveCookie();
+        fetchData();
       }
     })
   }
