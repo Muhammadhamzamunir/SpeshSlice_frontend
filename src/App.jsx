@@ -11,7 +11,7 @@ import ProductDetail from './Pages/ProductDetail';
 import Productlist from "./pages/Productlist";
 import Orders from "./pages/Orders";
 import MainLayout from "./components/MainLayout";
-import Addproduct from "./pages/Addproduct";
+// import Addproduct from "./pages/Addproduct";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Outlet, Navigate } from 'react-router-dom';
 import AddCategory from './Pages/AddCategory';
@@ -26,6 +26,9 @@ import ScrollToTop from './Components/ScrollToTop/ScrollToTop';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import AllCakeForCustomization from './Pages/AllCakeForCustomization';
 import BakeryDetailsAndEdits from './Components/BakeryDetailsAndEdits';
+import AddPartyItem from './Pages/AddPartyItem';
+import AskProductType from './Pages/AskProductType';
+import AddProduct from './Pages/Addproduct';
 const queryClient = new QueryClient();
 const PrivateRoutes = () => {
   const { userInfo } = useUserData();
@@ -38,41 +41,45 @@ const PrivateRoutes = () => {
 function App() {
   return (
     <UserAuthentication> <QueryClientProvider client={queryClient}>
-    <Router>
-      <ScrollToTop/>
-      <Routes>
-        <Route exact path="/" element={<Root />}>
-          <Route index element={<Home />} />
-          <Route path="signup" element={<SignUp />} />
-          <Route path="login" element={<Login />} />
-          <Route path="bakery/:id" element={<BakeryDetail />} />
-          <Route path="product/:id" element={<ProductDetail />} />
-          <Route path="bakeries" element={<BakeriesFilterPage />} />
-          <Route path="products" element={<ProductsFilterPage />} />
-          <Route path="*" element={<ErrorPage />} />
-          {/* Protucted Routes */}
-          <Route element={<PrivateRoutes />}>
-            <Route path="cart" element={<Cart />} />
-            <Route path="profile" element={<UserProfile />} />
-            <Route path="register-bakery" element={<RegisterBakery />} />
-            <Route path="customize-cake" element={<AllCakeForCustomization />} />
-            <Route path="cake/:id" element={<CustomizeCake />} />
-             {/* protucted routes for the bakery */}
-            <Route path="bakery" element={<MainLayout />} >
-            <Route index element={<BakeryDetailsAndEdits />} />
-              <Route path="orders" element={<Orders />} />
-              <Route path="add-product" element={<Addproduct />} />
-              <Route path="list-product" element={<ListProducts />} />
-              <Route path="add-category" element={<AddCategory />} />
-              <Route path="list-category" element={<ListCategory />} />
-            </Route>
+      <Router>
+        <ScrollToTop />
+        <Routes>
+          <Route exact path="/" element={<Root />}>
+            <Route index element={<Home />} />
+            <Route path="signup" element={<SignUp />} />
+            <Route path="login" element={<Login />} />
+            <Route path="bakery/:id" element={<BakeryDetail />} />
+            <Route path="product/:id" element={<ProductDetail />} />
+            <Route path="bakeries" element={<BakeriesFilterPage />} />
+            <Route path="products" element={<ProductsFilterPage />} />
+            <Route path="*" element={<ErrorPage />} />
+            {/* Protucted Routes */}
+            <Route element={<PrivateRoutes />}>
+              <Route path="cart" element={<Cart />} />
+              <Route path="profile" element={<UserProfile />} />
+              <Route path="register-bakery" element={<RegisterBakery />} />
+              <Route path="customize-cake" element={<AllCakeForCustomization />} />
+              <Route path="cake/:id" element={<CustomizeCake />} />
+              {/* protucted routes for the bakery */}
+              <Route path="bakery" element={<MainLayout />} >
+                <Route index element={<BakeryDetailsAndEdits />} />
+                <Route path="orders" element={<Orders />} />
+                <Route path="add-product" element={<AskProductType />} />
+                <Route path="add-product-cake" element={<AddProduct />} />
+                <Route path="add-product-party-item" element={<AddPartyItem />} />
 
+
+                <Route path="list-product" element={<ListProducts />} />
+                <Route path="add-category" element={<AddCategory />} />
+                <Route path="list-category" element={<ListCategory />} />
+              </Route>
+
+            </Route>
           </Route>
-        </Route>
-      </Routes>
-    </Router></QueryClientProvider>
-  </UserAuthentication>
-    
+        </Routes>
+      </Router></QueryClientProvider>
+    </UserAuthentication>
+
   );
 }
 

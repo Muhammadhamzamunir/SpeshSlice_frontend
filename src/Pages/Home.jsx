@@ -74,7 +74,7 @@ export default function Home() {
 
       </div>
       <OurServices />
-      {/* <RecentlyAdded /> */}
+      <RecentlyAdded />
 
 
 
