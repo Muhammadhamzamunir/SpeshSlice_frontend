@@ -33,14 +33,14 @@ export default function Cart() {
   const [selectedOption, setSelectedOption] = useState('Card');
   const [selectedAddress, setSelectedAddress] = useState();
   const [userAddress, setUserAddress] = useState(userInfo.user.address);
-  const [loading,setloading] =useState(false);
+  const [loading, setloading] = useState(false);
   const checkout = useRef()
   const handleProceedToCheckout = () => {
-    if(cartItems.length>0){
+    if (cartItems.length > 0) {
 
       checkout.current.classList.remove('hidden');
-    }else{
-      toast.error( "Your Cart is Empty", { position: "top-right", theme: "dark" });
+    } else {
+      toast.error("Your Cart is Empty", { position: "top-right", theme: "dark" });
 
     }
 
@@ -111,12 +111,13 @@ export default function Cart() {
       toast.error("Please Setect Address", { position: "bottom-right", theme: "dark" });
     } else {
       try {
- setloading(true)
+        setloading(true)
         const paymentInfo = {
           cartItems: cartItems.map(item => ({
-            id: item.id,
-            quantity: quantity[item.id] || 1,
-
+              id: item.id,
+              bakery_id: item.bakery_id,
+              quantity: quantity[item.id] || 1,
+              unit_price: parseFloat((parseFloat(item.price) * (1 - parseFloat(item.discounts[0]?.discount_percentage) / 100)).toFixed(2))
           })),
           totalAmount: subtotal.toFixed(2),
           selectedAddress: selectedAddress,
@@ -125,9 +126,11 @@ export default function Cart() {
           userPhone: userInfo.user.phone,
           userEmail: userInfo.user.email,
           payment: payment || null,
-        };
+      };
+      
 
         APIcall('/process-payment', 'POST', paymentInfo).then((data) => {
+          console.log(data)
           setloading(false);
           navigate("/")
         })
@@ -333,8 +336,8 @@ export default function Cart() {
                       onClick={() => { handlePayment(paymentMethod) }}
 
                     >
-                       {loading? <Squares/>:"Pay and Place Order"} 
-                      
+                      {loading ? <Squares /> : "Pay and Place Order"}
+
                     </Button>
                   </div>
 
@@ -355,7 +358,7 @@ export default function Cart() {
                   }}
 
                 >
-                 {loading? <Squares/>:"Place Order"} 
+                  {loading ? <Squares /> : "Place Order"}
                 </Button>
               </div>
             )

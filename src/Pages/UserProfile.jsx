@@ -11,10 +11,11 @@ import { AiFillDelete } from "react-icons/ai";
 import Cookies from 'js-cookie';
 import { BiEdit } from "react-icons/bi";
 import { Formik, Form, Field, ErrorMessage } from 'formik';
+import ViewOrdersModal from '../Components/ViewOrdersModal/ViewOrdersModal';
 import * as Yup from 'yup';
 function UserProfile() {
   const { userInfo, fetchData } = useUserData();
-  const [showFeedback,setShowFeedback] =useState();
+  const [showFeedback, setShowFeedback] = useState();
   const [editingProductData, setEditingProductData] = useState(null);
   const [editingProduct, setEditingProduct] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
@@ -239,6 +240,15 @@ function UserProfile() {
       },
     });
   };
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const handleViewOrders = () => {
+    setIsModalVisible(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalVisible(false);
+  };
   const PasswordSchema = Yup.object().shape({
     oldPassword: Yup.string().required('Old password is required'),
     newPassword: Yup.string().min(8, 'Password must be at least 8 characters').required('New password is required'),
@@ -351,9 +361,10 @@ function UserProfile() {
             <div className="text-center">
               <h3 className="text-lg leading-6 font-medium text-gray-900">Order History</h3>
               <p className="text-sm text-gray-500">You have made 5 orders in total</p>
-              <Button className="mt-4" variant="outline">
+              <Button className="mt-4" variant="outline" onClick={handleViewOrders}>
                 View Orders
               </Button>
+              <ViewOrdersModal isOpen={isModalVisible} onClose={handleCloseModal} />
             </div>
           </div>
         </div>

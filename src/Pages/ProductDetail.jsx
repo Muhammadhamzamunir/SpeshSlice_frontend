@@ -93,7 +93,6 @@ export default function ProductDetail() {
         APIcall(`/products/${id}`, 'GET')
             .then((data) => {
                 setproductDetail(data.data);
-                console.log(data.data);
                 APIcall(`/products/category/${data.data.category.name}`, 'GET')
                     .then((catgoryData) => {
 
