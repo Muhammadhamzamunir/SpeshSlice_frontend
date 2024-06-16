@@ -1,83 +1,365 @@
-import React from "react";
-import { Table } from "antd";
+// import React, { useEffect, useState } from "react";
+// import { Table, Spin, Modal, Select } from "antd";
+// import { BiEdit } from "react-icons/bi";
+// import { AiFillDelete } from "react-icons/ai";
+// import { Link } from "react-router-dom";
+// import BakeryDetails from "../Components/BakeryDetailsAndEdits";
+// import { useUserData } from "../Components/UserAuthentication(ContextApi)";
+// import index from "../Components/API";
+
+// const { Option } = Select;
+
+// const Orders = () => {
+//   const { userInfo, fetchData } = useUserData();
+//   const bakery_id = userInfo.user.bakery.id;
+//   const [orders, setOrders] = useState([]);
+//   const [loading, setLoading] = useState(true);
+//   const [modalVisible, setModalVisible] = useState(false);
+//   const [selectedOrder, setSelectedOrder] = useState(null);
+//   const [selectedOrderStatus, setSelectedOrderStatus] = useState("");
+
+//   const { APIcall } = index();
+
+//   useEffect(() => {
+//     fetchOrders();
+//   }, []);
+
+//   const fetchOrders = () => {
+//     setLoading(true);
+//     APIcall(`/getBakeryOrder/${bakery_id}`, 'GET')
+//       .then((data) => {
+//         setOrders(data);
+//       })
+//       .finally(() => setLoading(false));
+//   };
+
+//   const handleStatusUpdate = () => {
+//     if (!selectedOrder || !selectedOrderStatus) return;
+
+//     const data ={
+//       status: selectedOrderStatus,
+//     }
+//     console.log(selectedOrder);
+//     APIcall(`/orders/${selectedOrder.key}/update-status`, 'POST', data).then((response) => {
+//       console.log(response);
+//       console.log("Status updated successfully");
+      
+      
+//       fetchOrders(); 
+//     }).catch((error) => {
+      
+//       console.error("Error updating status:", error);
+     
+//     });
+//   };
+
+//   const handleEdit = (order) => {
+//     setSelectedOrder(order);
+//     setModalVisible(true);
+//     setSelectedOrderStatus(order.status); // Set default status in modal
+//   };
+
+//   const orderState = orders.map((order) => ({
+//     key: order.id,
+//     orderId: order.orderId,
+//     productName: order.product.name,
+//     productImage: (
+//       <img src={order.product.image_url} alt={order.product.name} style={{ width: 50, height: 50 }} />
+//     ),
+//     amount: parseFloat(order.total_amount).toFixed(2),
+//     selectedAddress: order.selected_address,
+//     userPhone: order.user_phone,
+//     method: order.method,
+//     status: order.status,
+//     createdAt: new Date(order.created_at).toLocaleString(),
+//   }));
+
+//   const columns = [
+//     {
+//       title: "Order ID",
+//       dataIndex: "orderId",
+//       key: "orderId",
+//     },
+//     {
+//       title: "Product Name",
+//       dataIndex: "productName",
+//       key: "productName",
+//     },
+//     {
+//       title: "Product Image",
+//       dataIndex: "productImage",
+//       key: "productImage",
+//     },
+//     {
+//       title: "Amount",
+//       dataIndex: "amount",
+//       key: "amount",
+//     },
+//     {
+//       title: "Selected Address",
+//       dataIndex: "selectedAddress",
+//       key: "selectedAddress",
+//     },
+//     {
+//       title: "User Phone",
+//       dataIndex: "userPhone",
+//       key: "userPhone",
+//     },
+//     {
+//       title: "Method",
+//       dataIndex: "method",
+//       key: "method",
+//     },
+//     {
+//       title: "Status",
+//       dataIndex: "status",
+//       key: "status",
+//     },
+//     {
+//       title: "Created At",
+//       dataIndex: "createdAt",
+//       key: "createdAt",
+//     },
+//     {
+//       title: "Action",
+//       key: "action",
+//       render: (_, record) => (
+//         <p to="/" className="fs-3 text-danger" onClick={() => handleEdit(record)}>
+//           <BiEdit />
+//         </p>
+//       ),
+//     },
+//   ];
+
+//   return (
+//     <div>
+//       <h3 className="mb-4 title">Orders</h3>
+//       <Spin spinning={loading}>
+//         <Table columns={columns} dataSource={orderState} />
+//       </Spin>
+//       <Modal
+//         title="Update Order Status"
+//         visible={modalVisible}
+//         onCancel={() => setModalVisible(false)}
+//         onOk={handleStatusUpdate}
+//       >
+//         <p>Select status:</p>
+//         <Select
+//           defaultValue={selectedOrderStatus}
+//           style={{ width: 200 }}
+//           onChange={(value) => setSelectedOrderStatus(value)}
+//         >
+//           <Option value="pending">Pending</Option>
+//           <Option value="Baking">Baking</Option>
+//           <Option value="completed">Completed</Option>
+//           <Option value="cancelled">Cancelled</Option>
+//         </Select>
+//       </Modal>
+//     </div>
+//   );
+// };
+
+// export default Orders;
+
+
+import React, { useEffect, useState } from "react";
+import { Table, Spin, Modal, Select } from "antd";
 import { BiEdit } from "react-icons/bi";
 import { AiFillDelete } from "react-icons/ai";
 import { Link } from "react-router-dom";
-import BakeryDetails from "../Components/BakeryDetailsAndEdits";
-const columns = [
-  {
-    title: "SNo",
-    dataIndex: "key",
-  },
-  {
-    title: "Name",
-    dataIndex: "name",
-  },
-  {
-    title: "Product",
-    dataIndex: "product",
-  },
-  {
-    title: "Amount",
-    dataIndex: "amount",
-  },
-  {
-    title: "Date",
-    dataIndex: "date",
-  },
-  {
-    title: "Action",
-    dataIndex: "action",
-  },
-];
+import { useUserData } from "../Components/UserAuthentication(ContextApi)";
+import index from "../Components/API";
+
+const { Option } = Select;
 
 const Orders = () => {
-  const orderState = [
-    // Mock data to be replaced with actual data fetched from backend
+  const { userInfo } = useUserData();
+  const bakery_id = userInfo.user.bakery.id;
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [selectedOrderStatus, setSelectedOrderStatus] = useState("");
+
+  const { APIcall } = index();
+
+  useEffect(() => {
+    fetchOrders();
+  }, []);
+
+  const fetchOrders = () => {
+    setLoading(true);
+    APIcall(`/getBakeryOrder/${bakery_id}`, 'GET')
+      .then((data) => {
+        setOrders(data);
+      })
+      .finally(() => setLoading(false));
+  };
+
+  const handleStatusUpdate = () => {
+    if (!selectedOrder || !selectedOrderStatus) return;
+
+    const data = {
+      status: selectedOrderStatus,
+    };
+
+    APIcall(`/orders/${selectedOrder.key}/update-status`, 'POST', data)
+      .then((response) => {
+        console.log("Status updated successfully");
+        fetchOrders();
+        setModalVisible(false);
+      })
+      .catch((error) => {
+        console.error("Error updating status:", error);
+      });
+  };
+
+  const handleEdit = (order) => {
+    setSelectedOrder(order);
+    setModalVisible(true);
+    setSelectedOrderStatus(order.status); // Set default status in modal
+  };
+
+  const orderState = orders.map((order) => ({
+    key: order.id,
+    orderId: order.orderId,
+    productName: order.product.name,
+    productImage: (
+      <img
+        src={order.product.image_url}
+        alt={order.product.name}
+        style={{ maxWidth: 100, maxHeight: 100, objectFit: "cover" }}
+      />
+    ),
+    amount: parseFloat(order.total_amount).toFixed(2),
+    unitPrice: parseFloat(order.unit_price).toFixed(2),
+    quantity: order.quantity,
+    selectedAddress: order.selected_address,
+    userPhone: order.user_phone,
+    method: order.method,
+    transactionId: order.transaction_id,
+    status: order.status,
+    createdAt: new Date(order.created_at).toLocaleString(),
+  }));
+
+  const columns = [
     {
-      key: 1,
-      name: "John Doe",
-      product: (
-        <Link to="/admin/order/123">
-          View Orders
-        </Link>
-      ),
-      amount: 100,
-      date: "2024-03-24T10:30:00",
+      title: "Order ID",
+      dataIndex: "orderId",
+      key: "orderId",
+      width: 150,
     },
     {
-      key: 2,
-      name: "Jane Smith",
-      product: (
-        <Link to="/admin/order/456">
-          View Orders
-        </Link>
+      title: "Product Name",
+      dataIndex: "productName",
+      key: "productName",
+      ellipsis: true,
+      width: 200,
+    },
+    {
+      title: "Product Image",
+      dataIndex: "productImage",
+      key: "productImage",
+      render: (text, record) => <div style={{ textAlign: "center" }}>{record.productImage}</div>,
+      width: 120,
+    },
+    {
+      title: "Amount",
+      dataIndex: "amount",
+      key: "amount",
+      width: 100,
+    },
+    {
+      title: "Unit Price",
+      dataIndex: "unitPrice",
+      key: "unitPrice",
+      width: 100,
+    },
+    {
+      title: "Quantity",
+      dataIndex: "quantity",
+      key: "quantity",
+      width: 100,
+    },
+    {
+      title: "Selected Address",
+      dataIndex: "selectedAddress",
+      key: "selectedAddress",
+      ellipsis: true,
+      width: 200,
+    },
+    {
+      title: "User Phone",
+      dataIndex: "userPhone",
+      key: "userPhone",
+      width: 150,
+    },
+    {
+      title: "Method",
+      dataIndex: "method",
+      key: "method",
+      width: 100,
+    },
+    {
+      title: "Transaction ID",
+      dataIndex: "transactionId",
+      key: "transactionId",
+      width: 150,
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      width: 100,
+    },
+    {
+      title: "Created At",
+      dataIndex: "createdAt",
+      key: "createdAt",
+      width: 200,
+    },
+    {
+      title: "Action",
+      key: "action",
+      fixed: "right",
+      width: 100,
+      render: (_, record) => (
+        <p to="/" className="fs-3 text-danger" onClick={() => handleEdit(record)}>
+          <BiEdit />
+        </p>
       ),
-      amount: 150,
-      date: "2024-03-25T11:45:00",
     },
   ];
-
-  const data = orderState.map((order, index) => ({
-    ...order,
-    action: (
-      <>
-        <Link to="/" className="fs-3 text-danger">
-          <BiEdit />
-        </Link>
-        <Link className="ms-3 fs-3 text-danger" to="/">
-          <AiFillDelete />
-        </Link>
-      </>
-    ),
-  }));
 
   return (
     <div>
       <h3 className="mb-4 title">Orders</h3>
-      <div>
-        <Table columns={columns} dataSource={data} />
-      </div>
+      <Spin spinning={loading}>
+        <Table
+          columns={columns}
+          dataSource={orderState}
+          scroll={{ x: "max-content" }}
+          bordered
+        />
+      </Spin>
+      <Modal
+        title="Update Order Status"
+        visible={modalVisible}
+        onCancel={() => setModalVisible(false)}
+        onOk={handleStatusUpdate}
+      >
+        <p>Select status:</p>
+        <Select
+          defaultValue={selectedOrderStatus}
+          style={{ width: 200 }}
+          onChange={(value) => setSelectedOrderStatus(value)}
+        >
+          <Option value="pending">Pending</Option>
+          <Option value="Baking">Baking</Option>
+          <Option value="completed">Completed</Option>
+          <Option value="cancelled">Cancelled</Option>
+        </Select>
+      </Modal>
     </div>
   );
 };

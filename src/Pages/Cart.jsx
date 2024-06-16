@@ -95,11 +95,12 @@ export default function Cart() {
 
   const gettingCartData = () => {
     APIcall(`/cart/${userInfo.user.id}`, 'GET').then((data) => {
+      
       setCartItems(data.data);
       let total = 0;
-      data.data.forEach(item => {
-        total += parseFloat(item.price) * (1 - parseFloat(item.discounts[0]?.discount_percentage) / 100) * (quantity[item.id] || item.cart_quantity);
-      });
+      // data.data.forEach(item => {
+      //   total += parseFloat(item.price) * (1 - parseFloat(item.discounts[0]?.discount_percentage) / 100) * (quantity[item.id] || item.cart_quantity);
+      // });
       setSubtotal(total);
     });
 
@@ -176,10 +177,10 @@ export default function Cart() {
                         /> <p>({item.reviews_count})</p>
                       </div>
                     </div>
-                    {item.discounts.length > 0 ?
+                    {/* {item.discounts.length > 0 ?
                       <span className="font-bold text-slate-500 mr-2">{(parseFloat(item.price) * (1 - parseFloat(item.discounts[0]?.discount_percentage) / 100)).toFixed(2)}</span> :
                       <span className="font-bold text-slate-500 mr-2">${item.price}</span>
-                    }
+                    } */}
                     <div className="mb-2 flex md:justify-left mt-3 ">
                       <div className="w-[100px]">
                         <div className="relative inline-flex flex-row items-stretch">
@@ -200,8 +201,8 @@ export default function Cart() {
                         </div>
                       </div>
                     </div>
-                    <div className="font-bold text-pink-400">${((parseFloat(item.price) * (1 - parseFloat(item.discounts[0]?.discount_percentage) / 100)) * (quantity[item.id] || item.cart_quantity)).toFixed(2)}</div>
-                    <div className="font-bold text-slate-500 cursor-pointer" onClick={() => handleRemoveFromCart(item.cart_id)}><MdOutlineDeleteForever /></div>
+                    {/* <div className="font-bold text-pink-400">${((parseFloat(item.price) * (1 - parseFloat(item.discounts[0]?.discount_percentage) / 100)) * (quantity[item.id] || item.cart_quantity)).toFixed(2)}</div>
+                    <div className="font-bold text-slate-500 cursor-pointer" onClick={() => handleRemoveFromCart(item.cart_id)}><MdOutlineDeleteForever /></div> */}
                   </div>
                 </div>
               </div>
