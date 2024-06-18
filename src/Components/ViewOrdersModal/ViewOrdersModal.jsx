@@ -1,68 +1,58 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Modal, Table, Image } from 'antd';
-import { EditOutlined, CloseOutlined } from '@ant-design/icons';
+import { Button, Modal, Table, Image,Tag } from 'antd';
+import { useUserData } from '../UserAuthentication(ContextApi)';
+import index from '../API';
 
 const ViewOrdersModal = ({ isOpen, onClose }) => {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [selectedOrder, setSelectedOrder] = useState(null);
+    const { userInfo } = useUserData();
+    const { APIcall } = index();
 
-    const handleViewOrders = async () => {
+    const handleViewOrders = () => {
         setLoading(true);
-        try {
-            const response = await fetch('http://127.0.0.1:8000/api/getUserOrder/2');
-            const data = await response.json();
+        APIcall(`/getUserOrder/${userInfo.user.id}`).then(data => {
+            
             setOrders(data);
-        } catch (error) {
+            setLoading(false);
+        }).catch(error => {
             console.error('Error fetching orders:', error);
-        }
-        setLoading(false);
+            setLoading(false);
+        });
     };
 
     useEffect(() => {
         handleViewOrders();
     }, []);
 
-    const handleEdit = (record) => {
-        setSelectedOrder(record);
-        // Logic to handle editing the order
-    };
-
-    const handleCancel = async (record) => {
-        console.log(record);
-        try {
-            // Logic to handle canceling the order
-            const response = await fetch(`http://127.0.0.1:8000/api/cancelOrder/${record.id}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
-            console.log(response);
-            if (response.success) {
-                // handleViewOrders();
-            } else {
-                console.error('Failed to cancel order');
-
-            }
-        } catch (error) {
-            console.error('Error canceling order:', error);
-        }
+    const handleCancel = (record) => {
+        APIcall(`/cancelOrder/${record.id}`, 'POST').then((data) => {
+           
+            handleViewOrders();
+        }).catch(error => {
+            console.error('Error cancelling order:', error);
+        });
     };
 
     const isOrderPlacedMoreThan6HoursAgo = (record) => {
         const orderPlacedTime = new Date(record.created_at);
         const currentTime = new Date();
         const diffInHours = (currentTime - orderPlacedTime) / (1000 * 60 * 60);
-        return diffInHours > 6;
+        return record.status !== 'pending' || diffInHours > 6;
     };
 
     const columns = [
         {
+            title: 'orderId',
+            dataIndex: 'orderId',
+            key: 'orderId',
+        },
+        {
             title: 'Product Image',
             dataIndex: 'product',
-            key: 'product',
+            key: 'productImage',
             render: (product) => <Image src={product.image_url} width={50} />,
+            fixed: 'left', 
         },
         {
             title: 'Product Name',
@@ -71,20 +61,34 @@ const ViewOrdersModal = ({ isOpen, onClose }) => {
             render: (product) => product.name,
         },
         {
+            title: 'Unit Price',
+            dataIndex: 'unit_price',
+            key: 'unitPrice',
+        },
+        {
+            title: 'Quantity',
+            dataIndex: 'quantity',
+            key: 'quantity',
+        },
+        {
+            title: 'Total Amount',
+            dataIndex: 'total_amount',
+            key: 'totalAmount',
+        },
+        {
             title: 'Bakery Name',
             dataIndex: 'bakery',
             key: 'bakeryName',
             render: (bakery) => bakery.business_name,
         },
         {
-            title: 'Total Amount',
-            dataIndex: 'total_amount',
-            key: 'total_amount',
-        },
-        {
             title: 'Selected Address',
             dataIndex: 'selected_address',
-            key: 'selected_address',
+            key: 'selectedAddress',
+        },{
+            title: 'Phone',
+            dataIndex: 'user_phone',
+            key: 'user_phone',
         },
         {
             title: 'Method',
@@ -95,6 +99,11 @@ const ViewOrdersModal = ({ isOpen, onClose }) => {
             title: 'Status',
             dataIndex: 'status',
             key: 'status',
+            render: (status) => (
+                <Tag color={status === 'pending' ? 'blue' : status === 'completed' ? 'green' : 'red'}>
+                    {status.toUpperCase()}
+                </Tag>
+            ),
         },
         {
             title: 'Actions',
@@ -103,20 +112,14 @@ const ViewOrdersModal = ({ isOpen, onClose }) => {
                 <>
                     {!isOrderPlacedMoreThan6HoursAgo(record) && (
                         <>
-                            <Button
-                                type="primary"
-                                icon={<EditOutlined />}
-                                onClick={() => handleEdit(record)}
-                            >
-                                Edit
-                            </Button>
-                            <Button
-                                type="danger"
-                                icon={<CloseOutlined />}
-                                onClick={() => handleCancel(record)}
-                            >
-                                Cancel
-                            </Button>
+                            {record.status === 'pending' && (
+                                <Button
+                                    type="danger btn"
+                                    onClick={() => handleCancel(record)}
+                                >
+                                    Cancel
+                                </Button>
+                            )}
                         </>
                     )}
                 </>
@@ -136,7 +139,10 @@ const ViewOrdersModal = ({ isOpen, onClose }) => {
                 dataSource={orders}
                 columns={columns}
                 loading={loading}
-                rowKey="orderId"
+                rowKey="id" 
+                scroll={{ x: 'max-content' }} 
+                pagination={true} 
+                responsive 
             />
         </Modal>
     );

@@ -187,7 +187,7 @@ const Login = () => {
                             type="email"
                             value={email}
                             onChange={handleEmail}
-                            placeholder="Number of Pound"
+                            placeholder="e.g: abc@gmail.com"
                             className="border border-gray-200 rounded-lg h-12 outline-red-400 shadow-none pl-5 text-base w-full"
 
                         />

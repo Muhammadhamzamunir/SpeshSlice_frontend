@@ -697,10 +697,10 @@ const CustomizeCake = () => {
                   const values = {
                     'customize': true
                   }
-                  console.log(userInfo.user.id,data.customize_cake.id,values);
-                   APIcall(`/cart/${userInfo.user.id}/${data.customize_cake.id}/1`, 'POST', values).then((data)=>{
-console.log(data);
-                   })
+                  console.log(userInfo.user.id, data.customize_cake.id, values);
+                  APIcall(`/cart/${userInfo.user.id}/${data.customize_cake.id}/1`, 'POST', values).then((data) => {
+
+                  })
                 })
               } catch (error) {
                 console.error('Error uploading image:', error);
