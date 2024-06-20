@@ -16,6 +16,7 @@ const TopRatedProducts = () => {
     const { userInfo } = useUserData();
     const fetchCategories = async () => {
         const response = await APIcall('/products', 'GET');
+        localStorage.setItem("products",JSON.stringify(response.data))
         return response.data.sort((a, b) => b.rating - a.rating);
     };
 

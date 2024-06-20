@@ -24,7 +24,23 @@ export default function BakeryDetail() {
   const { id } = useParams();
 
   useEffect(() => {
-    APIcall(`/bakery/${id}`, 'GET')
+    const bakeries = JSON.parse(localStorage.getItem("bakeries"));
+    const requested_id = id; 
+    if(bakeries){
+      const filteredbakery = bakeries.find((bakery) => bakery.id == requested_id);
+      if(filteredbakery){
+        
+        setBakeryDetails(filteredbakery);
+      }else{
+         fetchingData();
+      }
+    }else{
+       fetchingData();
+    }
+    
+  }, [id]);
+const fetchingData =()=>{
+  APIcall(`/bakery/${id}`, 'GET')
       .then((data) => {
         setBakeryDetails(data.data);
       })
@@ -39,8 +55,7 @@ export default function BakeryDetail() {
       .catch((error) => {
         console.error('Error fetching addresses:', error);
       });
-  }, [id]);
-
+}
 
   return (
     <div className="container mx-auto p-4 ">

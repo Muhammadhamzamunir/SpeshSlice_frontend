@@ -18,7 +18,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import Skeleton from 'react-loading-skeleton';
 
 export default function ProductDetail() {
-  const navigate = useNavigate();
+    const navigate = useNavigate();
     const { APIcall } = Index();
     const { userInfo, fetchData } = useUserData();
     const { id } = useParams();
@@ -54,20 +54,20 @@ export default function ProductDetail() {
 
 
     const addToCarthandle = () => {
-        if(userInfo.user){
-        APIcall(`/cart/${userInfo.user.id}/${productDetail.id}/${quantity}`, 'POST')
-    }else{
-        navigate('/login')
-      }
+        if (userInfo.user) {
+            APIcall(`/cart/${userInfo.user.id}/${productDetail.id}/${quantity}`, 'POST')
+        } else {
+            navigate('/login')
+        }
 
     }
-    const NotAvailable =()=>{
-  if(userInfo.user){
-      toast.error( "THIS PRODUCT IS NOT AVAILABLE", { position: "bottom-right", theme: "dark" });
+    const NotAvailable = () => {
+        if (userInfo.user) {
+            toast.error("THIS PRODUCT IS NOT AVAILABLE", { position: "bottom-right", theme: "dark" });
 
-  }else{
-    navigate('/login')
-  }
+        } else {
+            navigate('/login')
+        }
     }
     useEffect(() => {
         if (productDetail) {
@@ -90,25 +90,50 @@ export default function ProductDetail() {
     }, [currentDate, productDetail]);
 
     useEffect(() => {
-        APIcall(`/products/${id}`, 'GET')
-            .then((data) => {
-                setproductDetail(data.data);
-                APIcall(`/products/category/${data.data.category.name}`, 'GET')
-                    .then((catgoryData) => {
-
-                        setRelatedProducts(catgoryData.data)
-
-                    })
-                    .finally(() => {
-                        setLoading(false);
-                    });
-
-            })
-            .finally(() => {
-                // setLoading(false);
-            });
+        const products = JSON.parse(localStorage.getItem("products"));
+        const requested_id = id; 
+        
+        if (products) {
+            
+            const filteredProducts = products.find((product) => product.id == requested_id);
+            if(filteredProducts){
+                setproductDetail( filteredProducts);
+                APIcall(`/products/category/${filteredProducts.category.name}`, 'GET')
+                .then((catgoryData) => {
+                    setRelatedProducts(catgoryData.data)
+                })
+                .finally(() => {
+                    setLoading(false);
+                });
+            }else{
+                fetchingData()
+            }
+           
+        }else{
+            fetchingData()
+        }
+        
+        
 
     }, [id]);
+    const fetchingData =()=>{
+        APIcall(`/products/${id}`, 'GET')
+        .then((data) => {
+            setproductDetail(data.data);
+            console.log(data.data);
+            APIcall(`/products/category/${data.data.category.name}`, 'GET')
+            .then((catgoryData) => {
+                setRelatedProducts(catgoryData.data)
+            })
+            .finally(() => {
+                setLoading(false);
+            });
+
+        })
+        .finally(() => {
+            // setLoading(false);
+        });
+    }
     return (
         <>
             {productDetail ? (
@@ -180,7 +205,7 @@ export default function ProductDetail() {
                                         </p>
 
 
-                                   { productDetail.no_of_pounds &&   <div className="flex gap-5 items-center w-full my-5">
+                                        {productDetail.no_of_pounds && <div className="flex gap-5 items-center w-full my-5">
                                             <h5 className="mb-2 text-slate-500 font-medium">Size (pound):</h5>
                                             <div className="flex gap-3 flex-1">
                                                 {
@@ -212,15 +237,15 @@ export default function ProductDetail() {
                                                     </div>
                                                 </div>
                                             </div>
-                           
-                                           
-                                                <Button className="" onClick={productDetail.is_available ? addToCarthandle : NotAvailable} >
 
-                                                    Add to Cart
 
-                                                    <FaShoppingCart />
-                                                </Button>
-                                           
+                                            <Button className="" onClick={productDetail.is_available ? addToCarthandle : NotAvailable} >
+
+                                                Add to Cart
+
+                                                <FaShoppingCart />
+                                            </Button>
+
 
 
 
@@ -233,7 +258,7 @@ export default function ProductDetail() {
                                             <h5 className="mb-2 text-slate-500 font-normal">Category: <span className="text-[#ff579a] ml-2">{productDetail.category.name}</span> </h5>
                                             <h5 className="mb-2 text-slate-500 font-normal">Stock: <span className="text-[#ff579a] ml-2">{productDetail.quantity} Items </span> </h5>
                                             <h5 className="mb-2 text-slate-500 font-normal">Available: <span className="text-[#ff579a] ml-2">{productDetail.is_available ? "YES" : "NO"}  </span> </h5>
-                                           
+
 
 
                                         </div>

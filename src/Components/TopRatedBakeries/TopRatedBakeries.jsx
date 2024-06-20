@@ -16,7 +16,7 @@ export default function TopRatedBakeries() {
 
      const fetchProduct = async () => {
         const response = await APIcall('/bakery','GET');
-       
+        localStorage.setItem("bakeries",JSON.stringify(response.data))
         return response.data.sort((a, b) => b.averageRating - a.averageRating);
     };
 
