@@ -11,6 +11,7 @@ import ProductDetail from './Pages/ProductDetail';
 import Productlist from "./pages/Productlist";
 import Orders from "./pages/Orders";
 import MainLayout from "./components/MainLayout";
+
 // import Addproduct from "./pages/Addproduct";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Outlet, Navigate } from 'react-router-dom';
@@ -39,7 +40,9 @@ const PrivateRoutes = () => {
 }
 
 function App() {
+  const queryClient = new QueryClient();
   return (
+    
     <UserAuthentication> <QueryClientProvider client={queryClient}>
       <Router>
         <ScrollToTop />
