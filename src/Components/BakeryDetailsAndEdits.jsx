@@ -13,6 +13,7 @@ const BakeryDetailsAndEdits = () => {
     const [bakeryId, setBakeryId] = useState(userInfo.user.bakery.id);
     const [bakeryDetails, setBakeryDetails] = useState(null);
     const [isModalVisible, setIsModalVisible] = useState(false);
+    const [walletInfo, setWalletInfo] = useState();
     const [form] = Form.useForm();
     useEffect(() => {
         fetchBakeryData();
@@ -21,7 +22,8 @@ const BakeryDetailsAndEdits = () => {
     const fetchBakeryData = async () => {
         try {
             const response = await axios.get(`http://127.0.0.1:8000/api/bakery/${bakeryId}`);
-            console.log(response);
+            const response2 = await axios.get(`http://127.0.0.1:8000/api/getBakeryPaymentInfo/${bakeryId}`);
+            setWalletInfo(response2.data.data);
             setBakeryDetails(response.data.data);
         } catch (error) {
             console.error("Error fetching bakery data:", error);
@@ -62,6 +64,12 @@ const BakeryDetailsAndEdits = () => {
 
     return (
         <div className="bakery-details-container">
+            <div className="bg-white shadow  rounded-lg p-6 mb-6">
+                <div className="flex justify-between items-center"> <div className="flex items-end gap-3"><h1 className="text-3xl">Wallet </h1> <h1>Ammount</h1></div>
+                    <p>{walletInfo ? walletInfo.payment : 0.00} $</p></div>
+                <p className=" text-gray-500">contact with Admin to get your money </p>
+            </div>
+
             <div className="bg-white shadow rounded-lg p-6 mb-6">
                 {bakeryDetails ? (
                     <>

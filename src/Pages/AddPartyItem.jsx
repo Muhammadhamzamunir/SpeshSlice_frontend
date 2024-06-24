@@ -7,7 +7,6 @@ import { ToastContainer, toast } from 'react-toastify';
 import { useUserData } from '../Components/UserAuthentication(ContextApi)';
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import app from '../Components/Firebase/firebaseConfig';
-
 import { addProductSchema } from "../Components/Schema";
 
 const initialValues = {
@@ -16,7 +15,7 @@ const initialValues = {
     price: "",
     bakery_id: "",
     image_url: "",
-    category: "",
+    category: 13, // Set default category value here
     no_of_pounds: "",
     no_of_serving: "",
     quantity: "",
@@ -35,7 +34,8 @@ const AddPartyItem = () => {
     const storage = getStorage(app);
     const [selectedImage, setSelectedImage] = useState(null);
     const [imageURL, setImageURL] = useState('');
-    const [loading, setLoading] = useState();
+    const [loading, setLoading] = useState(false);
+
     useEffect(() => {
         APIcall(`/category`, 'GET')
             .then((data) => {
@@ -49,6 +49,7 @@ const AddPartyItem = () => {
     const handleCheckboxChange = (e) => {
         setProvideDiscount(e.target.checked);
     };
+
     const handleImageChange = (event) => {
         setPreviewImageLoading(true);
         const file = event.target.files[0];
@@ -65,25 +66,23 @@ const AddPartyItem = () => {
     const handleImageUpload = async () => {
         try {
             if (selectedImage) {
-
                 const timestamp = new Date().getTime();
                 const fileExtension = selectedImage.name.split('.').pop().toLowerCase();
-                const fileName = `bakery_image_${timestamp}.${fileExtension}`;
-                const storageRef = ref(storage, `bakery_images/${fileName}`);
+                const fileName = `party_item_image_${timestamp}.${fileExtension}`;
+                const storageRef = ref(storage, `party_item_images/${fileName}`);
 
                 await uploadBytes(storageRef, selectedImage);
                 const downloadURL = await getDownloadURL(storageRef);
                 console.log(downloadURL);
                 return downloadURL;
             } else {
-
                 throw new Error("Please Upload Product Image");
             }
         } catch (error) {
-
             throw error;
         }
     };
+
     return (
         <div className="md:container mx-auto md:px-4">
             <div className="w-full mb-3 md:p-4 shadow-2xl mt-9">
@@ -104,7 +103,7 @@ const AddPartyItem = () => {
                             // If discount percentage is present, perform additional validations
                             if (values.discount_percentage !== undefined && values.discount_percentage !== null) {
                                 // Validate discount percentage
-                                if (isNaN(discountPercentage) || values.discount_percentage < 0 || values.discount_percentage > 100) {
+                                if (isNaN(values.discount_percentage) || values.discount_percentage < 0 || values.discount_percentage > 100) {
                                     throw new Error("Please check discount percentage");
                                 }
 
@@ -113,7 +112,7 @@ const AddPartyItem = () => {
                                     throw new Error("End date should be greater than start date");
                                 }
                             }
-                            console.log(values)
+                            console.log(values);
                             // If all validations pass, make the API call
                             await APIcall('/products', 'POST', {
                                 ...values,
@@ -125,7 +124,6 @@ const AddPartyItem = () => {
                                     resetForm();
                                     setImageURL('');
                                     setLoading(false);
-
                                 }
                             });
                         } catch (error) {
@@ -138,7 +136,6 @@ const AddPartyItem = () => {
                             setSubmitting(false);
                         }
                     }}
-
                 >
                     {({ values, errors, touched, handleChange, handleBlur, handleSubmit, isSubmitting }) => (
                         <form onSubmit={handleSubmit}>
@@ -216,10 +213,8 @@ const AddPartyItem = () => {
                                             style={{ display: 'none' }}
                                         />
                                     </div>
-
                                 </div>
                                 <div className="col-span-1 md:col-span-1">
-
                                     <div className="mb-4">
                                         <Field
                                             required
@@ -228,18 +223,16 @@ const AddPartyItem = () => {
                                             className="border border-gray-200 rounded-lg h-16 shadow-none pl-5 text-base w-full mb-4"
                                             onChange={handleChange}
                                             onBlur={handleBlur}
-                                            value={values.category || "partyItemId"} // Set default value to "partyItemId"
+                                            value={values.category} // Set default value to "partyItemId"
                                             disabled // Disable the select element
                                         >
-                                            <option value="partyItemId" disabled className="text-gray-500 bg-gray-500">Party Item</option>
+                                            <option value="partyItemId" className="text-gray-500 bg-gray-500">Party Item</option>
                                             {categories.map((category) => (
                                                 <option key={category.id} value={category.id}>{category.name}</option>
                                             ))}
                                         </Field>
                                         {errors.category && touched.category && <p className="text-red-500 text-left">{errors.category}</p>}
                                     </div>
-
-
                                     <div className="mb-4">
                                         <Field required
                                             as="select"
@@ -255,8 +248,6 @@ const AddPartyItem = () => {
                                         </Field>
                                         {errors.is_available && touched.is_available && <p className="text-red-500 text-left">{errors.is_available}</p>}
                                     </div>
-
-
                                     <div className="mb-4">
                                         <input
                                             type="text"
@@ -269,7 +260,7 @@ const AddPartyItem = () => {
                                         />
                                         {errors.discount_percentage && touched.discount_percentage && <p className="text-red-500 text-left">{errors.discount_percentage}</p>}
                                     </div>
-                                    <div className="mb-4">
+                                    <div className="mb-4 relative">
                                         <input
                                             type="date"
                                             onChange={handleChange}
@@ -277,11 +268,27 @@ const AddPartyItem = () => {
                                             value={values.start_date}
                                             name="start_date"
                                             className="border border-gray-200 rounded-lg h-16 shadow-none pl-5 text-base w-full mb-4"
-                                            placeholder="Start Date (Optional)"
+                                            placeholder="Discount Start Date"
                                         />
+                                        <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                stroke="currentColor"
+                                                className="w-5 h-5"
+                                            >
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    strokeWidth={2}
+                                                    d="M8 7V3m8 4V3m-9 8h10m-9 4h9m-3 8h3m4-16a2 2 0 00-2-2H7a2 2 0 00-2 2v16a2 2 0 002 2h10a2 2 0 002-2V7z"
+                                                />
+                                            </svg>
+                                        </span>
                                         {errors.start_date && touched.start_date && <p className="text-red-500 text-left">{errors.start_date}</p>}
                                     </div>
-                                    <div className="mb-4">
+                                    <div className="mb-4 relative">
                                         <input
                                             type="date"
                                             onChange={handleChange}
@@ -289,8 +296,24 @@ const AddPartyItem = () => {
                                             value={values.end_date}
                                             name="end_date"
                                             className="border border-gray-200 rounded-lg h-16 shadow-none pl-5 text-base w-full mb-4"
-                                            placeholder="End Date (Optional)"
+                                            placeholder="Discount End Date"
                                         />
+                                        <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                stroke="currentColor"
+                                                className="w-5 h-5"
+                                            >
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    strokeWidth={2}
+                                                    d="M8 7V3m8 4V3m-9 8h10m-9 4h9m-3 8h3m4-16a2 2 0 00-2-2H7a2 2 0 00-2 2v16a2 2 0 002 2h10a2 2 0 002-2V7z"
+                                                />
+                                            </svg>
+                                        </span>
                                         {errors.end_date && touched.end_date && <p className="text-red-500 text-left">{errors.end_date}</p>}
                                     </div>
                                 </div>
@@ -306,10 +329,6 @@ const AddPartyItem = () => {
             </div>
         </div>
     );
-
-
 };
 
 export default AddPartyItem;
-
-

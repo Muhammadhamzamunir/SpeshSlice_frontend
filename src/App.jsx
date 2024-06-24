@@ -11,8 +11,6 @@ import ProductDetail from './Pages/ProductDetail';
 import Productlist from "./pages/Productlist";
 import Orders from "./pages/Orders";
 import MainLayout from "./components/MainLayout";
-
-// import Addproduct from "./pages/Addproduct";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Outlet, Navigate } from 'react-router-dom';
 import AddCategory from './Pages/AddCategory';
@@ -30,6 +28,9 @@ import BakeryDetailsAndEdits from './Components/BakeryDetailsAndEdits';
 import AddPartyItem from './Pages/AddPartyItem';
 import AskProductType from './Pages/AskProductType';
 import AddProduct from './Pages/Addproduct';
+import AboutUs from './Pages/AboutUs';
+import ContactUs from './Pages/ContactUs';
+
 const queryClient = new QueryClient();
 const PrivateRoutes = () => {
   const { userInfo } = useUserData();
@@ -56,6 +57,8 @@ function App() {
             <Route path="bakeries" element={<BakeriesFilterPage />} />
             <Route path="products" element={<ProductsFilterPage />} />
             <Route path="*" element={<ErrorPage />} />
+            <Route path="About-us/" element={<AboutUs/>}/>
+            <Route path="Contact-us/" element={<ContactUs/>}/>
             {/* Protucted Routes */}
             <Route element={<PrivateRoutes />}>
               <Route path="cart" element={<Cart />} />
@@ -70,8 +73,6 @@ function App() {
                 <Route path="add-product" element={<AskProductType />} />
                 <Route path="add-product-cake" element={<AddProduct />} />
                 <Route path="add-product-party-item" element={<AddPartyItem />} />
-
-
                 <Route path="list-product" element={<ListProducts />} />
                 <Route path="add-category" element={<AddCategory />} />
                 <Route path="list-category" element={<ListCategory />} />

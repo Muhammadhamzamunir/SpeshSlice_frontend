@@ -7,7 +7,6 @@ import { ToastContainer, toast } from 'react-toastify';
 import { useUserData } from '../Components/UserAuthentication(ContextApi)';
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import app from '../Components/Firebase/firebaseConfig';
-
 import { addProductSchema } from "../Components/Schema";
 
 const initialValues = {
@@ -35,7 +34,8 @@ const AddProduct = () => {
   const storage = getStorage(app);
   const [selectedImage, setSelectedImage] = useState(null);
   const [imageURL, setImageURL] = useState('');
-  const [loading,setLoading] = useState();
+  const [loading, setLoading] = useState(false);
+
   useEffect(() => {
     APIcall(`/category`, 'GET')
       .then((data) => {
@@ -49,6 +49,7 @@ const AddProduct = () => {
   const handleCheckboxChange = (e) => {
     setProvideDiscount(e.target.checked);
   };
+
   const handleImageChange = (event) => {
     setPreviewImageLoading(true);
     const file = event.target.files[0];
@@ -65,7 +66,6 @@ const AddProduct = () => {
   const handleImageUpload = async () => {
     try {
       if (selectedImage) {
-
         const timestamp = new Date().getTime();
         const fileExtension = selectedImage.name.split('.').pop().toLowerCase();
         const fileName = `bakery_image_${timestamp}.${fileExtension}`;
@@ -76,14 +76,13 @@ const AddProduct = () => {
         console.log(downloadURL);
         return downloadURL;
       } else {
-
         throw new Error("Please Upload Product Image");
       }
     } catch (error) {
-
       throw error;
     }
   };
+
   return (
     <div className="md:container mx-auto md:px-4">
       <div className="w-full mb-3 md:p-4 shadow-2xl mt-9">
@@ -104,7 +103,7 @@ const AddProduct = () => {
               // If discount percentage is present, perform additional validations
               if (values.discount_percentage !== undefined && values.discount_percentage !== null) {
                 // Validate discount percentage
-                if (isNaN(discountPercentage)|| values.discount_percentage < 0 || values.discount_percentage > 100) {
+                if (isNaN(values.discount_percentage) || values.discount_percentage < 0 || values.discount_percentage > 100) {
                   throw new Error("Please check discount percentage");
                 }
           
@@ -113,7 +112,7 @@ const AddProduct = () => {
                   throw new Error("End date should be greater than start date");
                 }
               }
-            console.log(values)
+              console.log(values);
               // If all validations pass, make the API call
               await APIcall('/products', 'POST', {
                 ...values,
@@ -138,7 +137,6 @@ const AddProduct = () => {
               setSubmitting(false);
             }
           }}
-          
         >
           {({ values, errors, touched, handleChange, handleBlur, handleSubmit, isSubmitting }) => (
             <form onSubmit={handleSubmit}>
@@ -247,38 +245,37 @@ const AddProduct = () => {
                     {errors.no_of_serving && touched.no_of_serving && <p className="text-red-500 text-left">{errors.no_of_serving}</p>}
                   </div>
                   <div className="mb-4">
-            <Field required
-              as="select"
-              name="category"
-              className="border border-gray-200 rounded-lg h-16 shadow-none pl-5 text-base w-full mb-4"
-              onChange={handleChange}
-              onBlur={handleBlur}
-              value={values.category}
-            >
-              <option value="" disabled className="text-gray-500 bg-gray-500">Select Category</option>
-              {categories.map((category) => (
-                <option key={category.id} value={category.id}>{category.name}</option>
-              ))}
-            </Field>
-            {errors.category && touched.category && <p className="text-red-500 text-left">{errors.category}</p>}
-          </div>
+                    <Field required
+                      as="select"
+                      name="category"
+                      className="border border-gray-200 rounded-lg h-16 shadow-none pl-5 text-base w-full mb-4"
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      value={values.category}
+                    >
+                      <option value="" disabled className="text-gray-500 bg-gray-500">Select Category</option>
+                      {categories.map((category) => (
+                        <option key={category.id} value={category.id}>{category.name}</option>
+                      ))}
+                    </Field>
+                    {errors.category && touched.category && <p className="text-red-500 text-left">{errors.category}</p>}
+                  </div>
 
-          <div className="mb-4">
-            <Field required
-              as="select"
-              name="is_available"
-              className="border border-gray-200 rounded-lg h-16 shadow-none pl-5 text-base w-full mb-4"
-              onChange={handleChange}
-              onBlur={handleBlur}
-              value={values.is_available}
-            >
-              <option value="" disabled >Select Availability</option>
-              <option value="true">YES</option>
-              <option value="false">NO</option>
-            </Field>
-            {errors.is_available && touched.is_available && <p className="text-red-500 text-left">{errors.is_available}</p>}
-          </div>
-
+                  <div className="mb-4">
+                    <Field required
+                      as="select"
+                      name="is_available"
+                      className="border border-gray-200 rounded-lg h-16 shadow-none pl-5 text-base w-full mb-4"
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      value={values.is_available}
+                    >
+                      <option value="" disabled >Select Availability</option>
+                      <option value="true">YES</option>
+                      <option value="false">NO</option>
+                    </Field>
+                    {errors.is_available && touched.is_available && <p className="text-red-500 text-left">{errors.is_available}</p>}
+                  </div>
 
                   <div className="mb-4">
                     <input
@@ -319,7 +316,7 @@ const AddProduct = () => {
                 </div>
               </div>
               <div className="text-right">
-                <Button type="submit" className=" mt-4" >
+                <Button type="submit" className="mt-4">
                   {loading ? <Squares /> : "Add Product"}
                 </Button>
               </div>
@@ -329,10 +326,6 @@ const AddProduct = () => {
       </div>
     </div>
   );
-
-
 };
 
 export default AddProduct;
-
-

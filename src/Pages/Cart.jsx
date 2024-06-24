@@ -121,7 +121,7 @@ export default function Cart() {
             id: item.id,
             bakery_id: item.bakery_id,
             customize : item.customize?"true":"false",
-            quantity: quantity[item.id] || 1,
+            quantity: quantity[item.id] || item.cart_quantity,
             unit_price: parseFloat((parseFloat(item.price) * (1 - (item.discounts.length > 0 ? parseFloat(item.discounts[0].discount_percentage) : 0) / 100)).toFixed(2))
           })),
           totalAmount: subtotal.toFixed(2),

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import ProductCard from "../Components/ProductCard2";
 import Slider from "rc-slider";
@@ -40,18 +39,15 @@ const ProductsFilterPage = () => {
 
   useEffect(() => {
     if (products) {
-      
       const categories = Array.from(new Set(products.map(item => item.category.name)));
       const bakeries = Array.from(new Set(products.map(item => item.bakery.business_name)));
       setUniqueCategories(categories);
       setUniqueBakeries(bakeries);
-     
     }
-   
     if (category) {
       setFilters((prevFilters) => ({ ...prevFilters, category }));
     }
-  }, [category,isLoading]);
+  }, [category, isLoading]);
 
   const handleFilterChange = (name, value) => {
     if (["minPounds", "maxPounds", "minServings", "maxServings"].includes(name)) {
@@ -77,9 +73,7 @@ const ProductsFilterPage = () => {
   };
 
   const filteredProducts = products.filter((product) => {
-    
     return (
-      
       product.price >= filters.price[0] &&
       product.price <= filters.price[1] &&
       (filters.bakery === "" || product.bakery.business_name.toLowerCase() === filters.bakery.toLowerCase()) &&
@@ -110,11 +104,11 @@ const ProductsFilterPage = () => {
   };
 
   return (
-    <div className="flex flex-col lg:flex-row ">
-      <div className="lg:w-1/5  border rounded-md p-4">
-        <div className="flex  justify-between">
+    <div className="flex flex-col lg:flex-row">
+      <div className="lg:w-1/5 border rounded-md p-4">
+        <div className="flex justify-between">
           <h2 className="text-2xl bg-gradient-to-r from-gradient-1 to-gradient-5 bg-clip-text text-transparent font-bold mb-4">Filters</h2>
-          <Button onClick={clearAllFilters} className=" mb-4">Clear All Filters</Button>
+          <Button onClick={clearAllFilters} className="mb-4">Clear All Filters</Button>
         </div>
         <div>
           <div className="flex justify-between mt-4">
@@ -165,54 +159,58 @@ const ProductsFilterPage = () => {
             ))}
           </select>
         </div>
-        <div className="mb-4">
-          <label className="block text-gradient-1 font-semibold mb-1">Category:</label>
-          <select
-            name="category"
-            value={filters.category}
-            onChange={(e) => handleFilterChange("category", e.target.value)}
-            className="border border-gray-300 rounded p-2 w-full"
-          >
-            <option value="">All</option>
-            {uniqueCategories.map(category => (
-              <option key={category} value={category}>{category}</option>
-            ))}
-          </select>
-        </div>
-        <label className="block text-gradient-1 font-semibold mb-1">Pounds:</label>
-        <div className="flex items-center justify-between gap-2">
-          <input
-            type="number"
-            placeholder="Min"
-            value={filters.minPounds}
-            onChange={(e) => handleFilterChange("minPounds", e.target.value)}
-            className="border border-gray-300 rounded p-2 w-full "
-          />
-          <input
-            type="number"
-            placeholder="Max"
-            value={filters.maxPounds}
-            onChange={(e) => handleFilterChange("maxPounds", e.target.value)}
-            className="border border-gray-300 rounded p-2 w-full "
-          />
-        </div>
-        <label className="block text-gradient-1 font-semibold mb-1 mt-4">Servings:</label>
-        <div className="flex items-center justify-between gap-2">
-          <input
-            type="number"
-            placeholder="Min"
-            value={filters.minServings}
-            onChange={(e) => handleFilterChange("minServings", e.target.value)}
-            className="border border-gray-300 rounded p-2 w-full "
-          />
-          <input
-            type="number"
-            placeholder="Max"
-            value={filters.maxServings}
-            onChange={(e) => handleFilterChange("maxServings", e.target.value)}
-            className="border border-gray-300 rounded p-2 w-full "
-          />
-        </div>
+        {filters.category !== 'Party Items' && (
+          <>
+            <div className="mb-4">
+              <label className="block text-gradient-1 font-semibold mb-1">Category:</label>
+              <select
+                name="category"
+                value={filters.category}
+                onChange={(e) => handleFilterChange("category", e.target.value)}
+                className="border border-gray-300 rounded p-2 w-full"
+              >
+                <option value="">All</option>
+                {uniqueCategories.map(category => (
+                  <option key={category} value={category}>{category}</option>
+                ))}
+              </select>
+            </div>
+            <label className="block text-gradient-1 font-semibold mb-1">Pounds:</label>
+            <div className="flex items-center justify-between gap-2">
+              <input
+                type="number"
+                placeholder="Min"
+                value={filters.minPounds}
+                onChange={(e) => handleFilterChange("minPounds", e.target.value)}
+                className="border border-gray-300 rounded p-2 w-full "
+              />
+              <input
+                type="number"
+                placeholder="Max"
+                value={filters.maxPounds}
+                onChange={(e) => handleFilterChange("maxPounds", e.target.value)}
+                className="border border-gray-300 rounded p-2 w-full "
+              />
+            </div>
+            <label className="block text-gradient-1 font-semibold mb-1 mt-4">Servings:</label>
+            <div className="flex items-center justify-between gap-2">
+              <input
+                type="number"
+                placeholder="Min"
+                value={filters.minServings}
+                onChange={(e) => handleFilterChange("minServings", e.target.value)}
+                className="border border-gray-300 rounded p-2 w-full "
+              />
+              <input
+                type="number"
+                placeholder="Max"
+                value={filters.maxServings}
+                onChange={(e) => handleFilterChange("maxServings", e.target.value)}
+                className="border border-gray-300 rounded p-2 w-full "
+              />
+            </div>
+          </>
+        )}
         <div className="mb-4">
           <label className="block text-gradient-1 font-semibold mb-1 mt-4">Availability:</label>
           <input
@@ -282,6 +280,7 @@ const ProductsFilterPage = () => {
 };
 
 export default ProductsFilterPage;
+
 
 
 // import React, { useState, useEffect } from "react";
