@@ -2,6 +2,7 @@ import React from 'react';
 import { FaArrowRight } from 'react-icons/fa';
 import HeroImage from '../assets/images/cake.png';
 import backgroundImage from '../assets/images/heroImage3.jpg';
+import "../Pages/CSS/Hero.CSS";
 import Button from './Button';
 import { Link } from 'react-router-dom';
 import { useUserData } from './UserAuthentication(ContextApi)';
@@ -9,7 +10,7 @@ const HeroSection = () => {
     const { userInfo } = useUserData();
     
     return (
-        <div className="w-full bg-cover bg-center md:bg-right relative md:min-h-[700px]">
+        <div className="w-full  md:hero-fix bg-cover bg-center md:bg-right relative">
             {/* Desktop overlay */}
             <div className="hidden md:block absolute top-0 left-0 w-full h-full bg-white opacity-0"></div>
             {/* Mobile overlay */}
@@ -19,12 +20,11 @@ const HeroSection = () => {
                     <div className="container mx-auto px-4">
                         <div className="flex flex-wrap -mx-4 items-center">
                             <div className="px-4 relative w-full md:w-6/12">
-                                <h1 className="text-[30px] md:text-[60px] font-semibold max-w-[557px] leading-[1.05em] mb-8 bg-gradient-to-r from-gradient-1 to-gradient-5 bg-clip-text text-transparent">Sign Up Today and Become a Seller on Our Cake Marketplace!</h1>
+                                <h1 className="text-[30px] md:text-[60px] font-semibold mb-8 bg-gradient-to-r from-gradient-1 to-gradient-5 bg-clip-text text-transparent">Sign Up Today and Become a Seller on Our Cake Marketplace!</h1>
 
                                 <div className='flex gap-3'>
                                 {
-                                    userInfo.user.isBakeryRegistered ? (<Link to="/bakery"> 
-                                    <Button >
+                                    userInfo.user.isBakeryRegistered ? (<Link to="/bakery"> <Button >
                                         Go To Your Store
                                         <FaArrowRight />
                                     </Button>

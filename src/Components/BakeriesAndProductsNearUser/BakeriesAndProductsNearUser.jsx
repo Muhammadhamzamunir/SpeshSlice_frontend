@@ -17,16 +17,18 @@ export default function BakeriesAndProductsNearUser() {
     const { userInfo, fetchData } = useUserData();
 
     useEffect(() => {
+      if(userInfo){
         APIcall(`/bakeries-near-user/${userInfo.user.id}`, 'GET')
-            .then((data) => {
-                setBakeriesAndProducts(data.data);
-            })
-            .catch((error) => {
-                console.error('Error fetching top rated bakeries:', error);
-            })
-            .finally(() => {
-                setLoading(false);
-            });
+        .then((data) => {
+            setBakeriesAndProducts(data.data);
+        })
+        .catch((error) => {
+            console.error('Error fetching top rated bakeries:', error);
+        })
+        .finally(() => {
+            setLoading(false);
+        });
+      }
     }, []);
 
     const responsive = {

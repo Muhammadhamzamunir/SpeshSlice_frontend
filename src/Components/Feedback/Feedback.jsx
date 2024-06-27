@@ -4,7 +4,7 @@ import Button from '../Button';
 import Rating from 'react-rating-stars-component';
 import Index from '../API';
 import { useUserData } from '../UserAuthentication(ContextApi)';
-
+import axios from "axios";
 export default function Feedback() {
     const { APIcall } = Index();
     const { userInfo } = useUserData();
@@ -20,44 +20,16 @@ export default function Feedback() {
     const [confirmVisible, setConfirmVisible] = useState(false);
     const [toxicComment, setToxicComment] = useState(false);
     const checkCommentToxicity = async (comment) => {
-        try {
-            const response = await fetch('https://commentanalyzer.googleapis.com/v1alpha1/comments:analyze?key=AIzaSyC2tjuYnAXiw43cCasuP2RSde8VBou1400', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    comment: { text: comment },
-                    requestedAttributes: {
-                        TOXICITY: {},
-                        SPAM: {},
-                        SEVERE_TOXICITY: {}
 
-                    },
-                }),
-            });
-            const responseData = await response.json();
+        const response = await axios.post("http://127.0.0.1:5000/predict", {
+            text: comment,
+        });
 
-
-            const toxicityScore = responseData.attributeScores.TOXICITY.summaryScore.value;
-            const spamScore = responseData.attributeScores.SPAM.summaryScore.value;
-
-
-
-            const toxicityThreshold = 0.7;
-            const spamThreshold = 0.7;
-
-
-
-            const isToxic = toxicityScore > toxicityThreshold;
-            const isSpam = spamScore > spamThreshold;
-
-
-            return isToxic || isSpam ;
-        } catch (error) {
-            console.error('Error analyzing comment:', error);
-            return false;
+        if (response.data.hate_speech) {
+            const isToxic = true
+            return isToxic
         }
+
     };
 
 
@@ -73,16 +45,18 @@ export default function Feedback() {
     useEffect(() => {
         checkPendingFeedback();
     }, []);
-const checkPendingFeedback=()=>{
-    APIcall(`/pending-feedback/${userInfo.user.id}`, 'GET')
-    .then((data) => {
-        setProducts(data.products);
-        setBakeries(data.bakeries);
-    })
-    .catch((error) => {
-        console.error('Error fetching products:', error);
-    });
-}
+    const checkPendingFeedback = () => {
+        if (userInfo) {
+            APIcall(`/pending-feedback/${userInfo.user.id}`, 'GET')
+                .then((data) => {
+                    setProducts(data.products);
+                    setBakeries(data.bakeries);
+                })
+                .catch((error) => {
+                    console.error('Error fetching products:', error);
+                });
+        }
+    }
     const handleProductFeedback = (product) => {
         setSelectedProduct(product);
         setVisibleProductModal(true);
@@ -99,18 +73,18 @@ const checkPendingFeedback=()=>{
 
             setToxicComment(true);
 
-            
+
             return;
         }
         else {
             setToxicComment(false);
-             const record = {
+            const record = {
                 user_id: userInfo.user.id,
-                bakery_id:selectedBakery.id,
-                rating:rating,
-                description:description
-             }
-            APIcall(`/bakery/${selectedBakery.id}/review`, 'POST',record)
+                bakery_id: selectedBakery.id,
+                rating: rating,
+                description: description
+            }
+            APIcall(`/bakery/${selectedBakery.id}/review`, 'POST', record)
                 .then((data) => {
                     setRating(0);
                     setVisibleBakeryModal(false)
@@ -127,23 +101,23 @@ const checkPendingFeedback=()=>{
 
             setToxicComment(true);
 
-          
+
             return;
         }
         else {
             setToxicComment(false);
-             const record = {
+            const record = {
                 user_id: userInfo.user.id,
-                product_id:selectedProduct.id,
-                rating:rating,
-                description:description
-             }
-            APIcall(`/products/${selectedProduct.id}/review`, 'POST',record)
+                product_id: selectedProduct.id,
+                rating: rating,
+                description: description
+            }
+            APIcall(`/products/${selectedProduct.id}/review`, 'POST', record)
                 .then((data) => {
-                     setRating(0);
-                     setVisibleProductModal(false)
-                     checkPendingFeedback();
-                     setDescription('')
+                    setRating(0);
+                    setVisibleProductModal(false)
+                    checkPendingFeedback();
+                    setDescription('')
                 })
 
         }
@@ -274,3 +248,46 @@ const checkPendingFeedback=()=>{
 
     );
 }
+
+
+
+
+
+// try {
+//     const response = await fetch('https://commentanalyzer.googleapis.com/v1alpha1/comments:analyze?key=AIzaSyC2tjuYnAXiw43cCasuP2RSde8VBou1400', {
+//         method: 'POST',
+//         headers: {
+//             'Content-Type': 'application/json',
+//         },
+//         body: JSON.stringify({
+//             comment: { text: comment },
+//             requestedAttributes: {
+//                 TOXICITY: {},
+//                 SPAM: {},
+//                 SEVERE_TOXICITY: {}
+
+//             },
+//         }),
+//     });
+//     const responseData = await response.json();
+
+
+//     const toxicityScore = responseData.attributeScores.TOXICITY.summaryScore.value;
+//     const spamScore = responseData.attributeScores.SPAM.summaryScore.value;
+
+
+
+//     const toxicityThreshold = 0.7;
+//     const spamThreshold = 0.7;
+
+
+
+//     const isToxic = toxicityScore > toxicityThreshold;
+//     const isSpam = spamScore > spamThreshold;
+
+
+//     return isToxic || isSpam ;
+// } catch (error) {
+//     console.error('Error analyzing comment:', error);
+//     return false;
+// }

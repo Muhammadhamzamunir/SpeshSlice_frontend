@@ -270,7 +270,7 @@ const AddPartyItem = () => {
                                             className="border border-gray-200 rounded-lg h-16 shadow-none pl-5 text-base w-full mb-4"
                                             placeholder="Discount Start Date"
                                         />
-                                        <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">
+                                        {/* <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">
                                             <svg
                                                 xmlns="http://www.w3.org/2000/svg"
                                                 fill="none"
@@ -285,7 +285,7 @@ const AddPartyItem = () => {
                                                     d="M8 7V3m8 4V3m-9 8h10m-9 4h9m-3 8h3m4-16a2 2 0 00-2-2H7a2 2 0 00-2 2v16a2 2 0 002 2h10a2 2 0 002-2V7z"
                                                 />
                                             </svg>
-                                        </span>
+                                        </span> */}
                                         {errors.start_date && touched.start_date && <p className="text-red-500 text-left">{errors.start_date}</p>}
                                     </div>
                                     <div className="mb-4 relative">
@@ -298,7 +298,7 @@ const AddPartyItem = () => {
                                             className="border border-gray-200 rounded-lg h-16 shadow-none pl-5 text-base w-full mb-4"
                                             placeholder="Discount End Date"
                                         />
-                                        <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">
+                                        {/* <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">
                                             <svg
                                                 xmlns="http://www.w3.org/2000/svg"
                                                 fill="none"
@@ -313,7 +313,7 @@ const AddPartyItem = () => {
                                                     d="M8 7V3m8 4V3m-9 8h10m-9 4h9m-3 8h3m4-16a2 2 0 00-2-2H7a2 2 0 00-2 2v16a2 2 0 002 2h10a2 2 0 002-2V7z"
                                                 />
                                             </svg>
-                                        </span>
+                                        </span> */}
                                         {errors.end_date && touched.end_date && <p className="text-red-500 text-left">{errors.end_date}</p>}
                                     </div>
                                 </div>

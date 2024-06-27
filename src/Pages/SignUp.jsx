@@ -36,7 +36,7 @@ const SignUp = () => {
                                     <div className="px-8 flex justify-start items-start flex-col">
                                         <h1 className="text-3xl font-semibold mb-3 bg-gradient-to-r from-gradient-1 to-gradient-5 bg-clip-text text-transparent">Create an Account</h1>
 
-                                        <p className="mb-2">Already have an account? <a href="#" className="bg-gradient-to-r from-gradient-1 to-gradient-5 bg-clip-text text-transparent">Login</a></p>
+                                        <p className="mb-2">Already have an account? <a href="/login" className="bg-gradient-to-r from-gradient-1 to-gradient-5 bg-clip-text text-transparent">Login</a></p>
 
                                         <Formik initialValues={initialValues} validationSchema={SignupSchema} onSubmit={async (values, action) => {
 

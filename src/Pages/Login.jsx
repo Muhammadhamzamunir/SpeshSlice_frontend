@@ -72,7 +72,7 @@ const Login = () => {
                                     <div className="p-8 flex justify-start items-start flex-col">
                                         <h1 className="text-3xl font-semibold mb-8 bg-gradient-to-r from-gradient-1 to-gradient-5 bg-clip-text text-transparent">Login</h1>
 
-                                        <p className="mb-6">Don't have an account? <a href="#" className="bg-gradient-to-r from-gradient-1 to-gradient-5 bg-clip-text text-transparent">Create here</a></p>
+                                        <p className="mb-6">Don't have an account? <a href="/SignUp" className="bg-gradient-to-r from-gradient-1 to-gradient-5 bg-clip-text text-transparent">Create here</a></p>
 
                                         <Formik initialValues={initialValues} validationSchema={loginSchema} onSubmit={async (values, action) => {
 
@@ -84,14 +84,19 @@ const Login = () => {
                                                       
                                                       SetCookie(data.token, data.user, 720);
                                                        navigate("/", { replace: true });
+                                                       action.resetForm();
 
                                                     } else if (data.success && !data.rememberMe) {
                                                         SetCookie(data.token, data.user, 1);
                                                          navigate("/", { replace: true });
+                                                         action.resetForm();
+                                                    }else{
+                                                        
+                                                        setSecurityCode(Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000    )
+
                                                     }
-                                                    fetchData();
-                                                     action.resetForm();
-                                                     setLoading(false)
+                                                     fetchData();
+                                                    setLoading(false)
                                                 })
 
 
